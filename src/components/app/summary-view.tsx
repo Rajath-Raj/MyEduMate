@@ -15,8 +15,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { BrainCircuit, BookUp, FileText, ArrowLeft, Mic } from "lucide-react";
-import { ScrollArea } from "../ui/scroll-area";
+import { BrainCircuit, ArrowLeft } from "lucide-react";
 
 type SummaryViewProps = {
   title: string;
@@ -76,10 +75,6 @@ export default function SummaryView({
             <Button onClick={onStartChat}>
               <BrainCircuit className="mr-2" />
               Ask a Question
-            </Button>
-             <Button>
-              <Mic className="mr-2" />
-              Listen
             </Button>
         </div>
     </div>
