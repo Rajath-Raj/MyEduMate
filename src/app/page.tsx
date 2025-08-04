@@ -13,13 +13,13 @@ import PdfUploadForm, {
 import SummaryView from "@/components/app/summary-view";
 import ChatView, { type Message } from "@/components/app/chat-view";
 import { Button } from "@/components/ui/button";
-import { Loader2, Home as HomeIcon, History, User, Plus } from "lucide-react";
+import { Loader2, Home as HomeIcon, History, User, Plus, Upload } from "lucide-react";
 import WelcomeScreen from "@/components/app/welcome-screen";
 
 type SummaryLevel = z.infer<typeof PdfUploadFormSchema>["summaryLevel"];
 type AppState = "welcome" | "dashboard" | "upload" | "summarizing" | "summary" | "chat";
 
-export default function Home() {
+export default function HomePage() {
   const [appState, setAppState] = useState<AppState>("welcome");
   const [summary, setSummary] = useState<string>("");
   const [pdfTitle, setPdfTitle] = useState("");
@@ -118,26 +118,12 @@ export default function Home() {
         return <WelcomeScreen onGuestLogin={handleGuestLogin} />
       case "dashboard":
         return (
-          <div className="text-center p-4">
-            <h1 className="text-2xl font-bold mb-2">Hi, Alex! Ready to learn today?</h1>
-            <div className="grid grid-cols-2 gap-4 mt-8">
-              <div className="p-4 border rounded-lg shadow-sm">
-                <p>Math</p>
-                <p className="text-sm text-muted-foreground">Uploaded 2 days ago</p>
-              </div>
-               <div className="p-4 border rounded-lg shadow-sm">
-                <p>Science</p>
-                <p className="text-sm text-muted-foreground">Uploaded 5 days ago</p>
-              </div>
-               <div className="p-4 border rounded-lg shadow-sm">
-                <p>History</p>
-                <p className="text-sm text-muted-foreground">Uploaded 1 week ago</p>
-              </div>
-               <div className="p-4 border rounded-lg shadow-sm">
-                <p>Literature</p>
-                <p className="text-sm text-muted-foreground">Uploaded 2 weeks ago</p>
-              </div>
-            </div>
+          <div className="text-center p-4 flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
+            <h1 className="text-2xl font-bold mb-4">Hi, Alex! Ready to learn today?</h1>
+            <Button size="lg" className="h-14 rounded-full shadow-lg" onClick={() => setAppState('upload')}>
+              <Upload className="mr-2" />
+              Upload a PDF to Get Started
+            </Button>
           </div>
         )
       case "upload":
@@ -179,7 +165,7 @@ export default function Home() {
     }
   };
 
-  const showBottomNav = ["dashboard", "upload", "summary", "chat"].includes(appState);
+  const showBottomNav = !["welcome", "summarizing"].includes(appState);
 
   return (
     <div className="flex flex-col min-h-screen bg-background font-sans">
@@ -188,20 +174,10 @@ export default function Home() {
         <div className="w-full max-w-3xl mx-auto">{renderContent()}</div>
       </main>
       
-      {appState === 'dashboard' && (
-         <Button
-            size="lg"
-            className="fixed bottom-24 right-6 h-14 w-14 rounded-full shadow-lg"
-            onClick={() => setAppState('upload')}
-          >
-            <Plus className="h-7 w-7" />
-          </Button>
-      )}
-
       {showBottomNav && (
         <footer className="fixed bottom-0 left-0 right-0 bg-card border-t shadow-inner">
           <nav className="container mx-auto px-4 h-16 flex justify-around items-center">
-            <Button variant="ghost" className="flex flex-col h-auto items-center text-primary">
+            <Button variant="ghost" className="flex flex-col h-auto items-center text-primary" onClick={() => setAppState('dashboard')}>
               <HomeIcon />
               <span className="text-xs mt-1">Home</span>
             </Button>
