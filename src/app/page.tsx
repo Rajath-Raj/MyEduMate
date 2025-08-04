@@ -12,13 +12,15 @@ import PdfUploadForm, {
 } from "@/components/app/pdf-upload-form";
 import SummaryView from "@/components/app/summary-view";
 import ChatView, { type Message } from "@/components/app/chat-view";
-import { Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Loader2, Home as HomeIcon, History, User, Plus } from "lucide-react";
+import WelcomeScreen from "@/components/app/welcome-screen";
 
 type SummaryLevel = z.infer<typeof PdfUploadFormSchema>["summaryLevel"];
-type AppState = "upload" | "summarizing" | "summary" | "chat";
+type AppState = "welcome" | "dashboard" | "upload" | "summarizing" | "summary" | "chat";
 
 export default function Home() {
-  const [appState, setAppState] = useState<AppState>("upload");
+  const [appState, setAppState] = useState<AppState>("welcome");
   const [summary, setSummary] = useState<string>("");
   const [pdfTitle, setPdfTitle] = useState("");
   const { toast } = useToast();
@@ -35,6 +37,10 @@ export default function Home() {
       reader.onerror = (error) => reject(error);
     });
   };
+
+  const handleGuestLogin = () => {
+    setAppState("dashboard");
+  }
 
   const handleSummarize = async (data: z.infer<typeof PdfUploadFormSchema>) => {
     setAppState("summarizing");
@@ -108,8 +114,34 @@ export default function Home() {
 
   const renderContent = () => {
     switch (appState) {
+      case "welcome":
+        return <WelcomeScreen onGuestLogin={handleGuestLogin} />
+      case "dashboard":
+        return (
+          <div className="text-center p-4">
+            <h1 className="text-2xl font-bold mb-2">Hi, Alex! Ready to learn today?</h1>
+            <div className="grid grid-cols-2 gap-4 mt-8">
+              <div className="p-4 border rounded-lg shadow-sm">
+                <p>Math</p>
+                <p className="text-sm text-muted-foreground">Uploaded 2 days ago</p>
+              </div>
+               <div className="p-4 border rounded-lg shadow-sm">
+                <p>Science</p>
+                <p className="text-sm text-muted-foreground">Uploaded 5 days ago</p>
+              </div>
+               <div className="p-4 border rounded-lg shadow-sm">
+                <p>History</p>
+                <p className="text-sm text-muted-foreground">Uploaded 1 week ago</p>
+              </div>
+               <div className="p-4 border rounded-lg shadow-sm">
+                <p>Literature</p>
+                <p className="text-sm text-muted-foreground">Uploaded 2 weeks ago</p>
+              </div>
+            </div>
+          </div>
+        )
       case "upload":
-        return <PdfUploadForm onSubmit={handleSummarize} isLoading={false} />;
+        return <PdfUploadForm onSubmit={handleSummarize} isLoading={false} onBack={() => setAppState("dashboard")} />;
       case "summarizing":
         return (
           <div className="flex flex-col items-center justify-center gap-4 text-center h-full min-h-[400px]">
@@ -129,6 +161,7 @@ export default function Home() {
             summary={summary}
             onStartChat={handleStartChat}
             onSummarizeAgain={() => setAppState("upload")}
+            onChangeLevel={() => setAppState("upload")}
           />
         );
       case "chat":
@@ -146,12 +179,43 @@ export default function Home() {
     }
   };
 
+  const showBottomNav = ["dashboard", "upload", "summary", "chat"].includes(appState);
+
   return (
-    <div className="flex flex-col min-h-screen bg-background font-body">
-      <Header />
-      <main className="flex-1 container mx-auto px-4 py-8">
+    <div className="flex flex-col min-h-screen bg-background font-sans">
+      {appState !== 'welcome' && <Header />}
+      <main className="flex-1 container mx-auto px-4 py-8 pb-24">
         <div className="w-full max-w-3xl mx-auto">{renderContent()}</div>
       </main>
+      
+      {appState === 'dashboard' && (
+         <Button
+            size="lg"
+            className="fixed bottom-24 right-6 h-14 w-14 rounded-full shadow-lg"
+            onClick={() => setAppState('upload')}
+          >
+            <Plus className="h-7 w-7" />
+          </Button>
+      )}
+
+      {showBottomNav && (
+        <footer className="fixed bottom-0 left-0 right-0 bg-card border-t shadow-inner">
+          <nav className="container mx-auto px-4 h-16 flex justify-around items-center">
+            <Button variant="ghost" className="flex flex-col h-auto items-center text-primary">
+              <HomeIcon />
+              <span className="text-xs mt-1">Home</span>
+            </Button>
+            <Button variant="ghost" className="flex flex-col h-auto items-center text-muted-foreground">
+              <History />
+              <span className="text-xs mt-1">History</span>
+            </Button>
+            <Button variant="ghost" className="flex flex-col h-auto items-center text-muted-foreground">
+              <User />
+              <span className="text-xs mt-1">Profile</span>
+            </Button>
+          </nav>
+        </footer>
+      )}
     </div>
   );
 }

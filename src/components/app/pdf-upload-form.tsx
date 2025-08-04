@@ -15,11 +15,11 @@ import {
 } from "@/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, UploadCloud } from "lucide-react";
+import { Loader2, UploadCloud, ArrowLeft } from "lucide-react";
 import { useState } from "react";
 import { Input } from "../ui/input";
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB
 const ACCEPTED_FILE_TYPES = ["application/pdf"];
 
 export const PdfUploadFormSchema = z.object({
@@ -28,7 +28,7 @@ export const PdfUploadFormSchema = z.object({
     .refine((file): file is File => file instanceof File, "Please upload a file.")
     .refine(
       (file) => file.size <= MAX_FILE_SIZE,
-      `Max file size is 5MB.`
+      `Max file size is 20MB.`
     )
     .refine(
       (file) => ACCEPTED_FILE_TYPES.includes(file.type),
@@ -40,11 +40,13 @@ export const PdfUploadFormSchema = z.object({
 type PdfUploadFormProps = {
   onSubmit: (data: z.infer<typeof PdfUploadFormSchema>) => void;
   isLoading: boolean;
+  onBack: () => void;
 };
 
 export default function PdfUploadForm({
   onSubmit,
   isLoading,
+  onBack,
 }: PdfUploadFormProps) {
   const [fileName, setFileName] = useState("");
 
@@ -64,13 +66,14 @@ export default function PdfUploadForm({
   };
 
   return (
-    <Card className="w-full shadow-lg">
-      <CardHeader>
-        <CardTitle className="text-center text-2xl font-headline">
-          Hi, what would you like to learn today?
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
+    <div className="w-full max-w-2xl mx-auto">
+        <div className="flex items-center gap-4 mb-8">
+            <Button variant="ghost" size="icon" onClick={onBack}>
+                <ArrowLeft />
+            </Button>
+            <h1 className="text-2xl font-bold">Upload your PDF</h1>
+        </div>
+        <div className="space-y-8">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField
@@ -78,37 +81,33 @@ export default function PdfUploadForm({
               name="pdfFile"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Upload a PDF</FormLabel>
                   <FormControl>
-                    <div className="relative">
-                      <label
-                        htmlFor="file-upload"
-                        className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-lg cursor-pointer bg-card hover:bg-muted transition-colors"
-                      >
-                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                          <UploadCloud className="w-10 h-10 mb-3 text-muted-foreground" />
-                          <p className="mb-2 text-sm text-muted-foreground">
-                            <span className="font-semibold">Click to upload</span>{" "}
-                            or drag and drop
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            PDF (MAX. 5MB)
-                          </p>
-                        </div>
-                        <Input
-                          id="file-upload"
-                          type="file"
-                          className="hidden"
-                          onChange={handleFileChange}
-                          accept={ACCEPTED_FILE_TYPES.join(",")}
-                        />
-                      </label>
-                    </div>
+                    <label
+                      htmlFor="file-upload"
+                      className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-lg cursor-pointer bg-card hover:bg-muted transition-colors p-5"
+                    >
+                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                        <UploadCloud className="w-10 h-10 mb-3 text-muted-foreground" />
+                        <p className="mb-2 text-sm text-muted-foreground">
+                          Drag and drop or tap to upload
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          PDFs only, up to 20MB
+                        </p>
+                      </div>
+                      <Input
+                        id="file-upload"
+                        type="file"
+                        className="hidden"
+                        onChange={handleFileChange}
+                        accept={ACCEPTED_FILE_TYPES.join(",")}
+                      />
+                    </label>
                   </FormControl>
-                  <FormDescription>
+                  <FormDescription className="text-center">
                     {fileName
                       ? `Selected file: ${fileName}`
-                      : "Please upload a PDF document you want to summarize."}
+                      : ""}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -120,31 +119,29 @@ export default function PdfUploadForm({
               name="summaryLevel"
               render={({ field }) => (
                 <FormItem className="space-y-3">
-                  <FormLabel>Select Summary Level</FormLabel>
+                  <FormLabel>Select Difficulty Level</FormLabel>
                   <FormControl>
                     <RadioGroup
                       onValueChange={field.onChange}
                       defaultValue={field.value}
-                      className="flex flex-col sm:flex-row gap-4"
+                      className="grid grid-cols-3 gap-2"
                     >
-                      <FormItem className="flex items-center space-x-3 space-y-0">
-                        <FormControl>
-                          <RadioGroupItem value="Beginner" />
-                        </FormControl>
-                        <FormLabel className="font-normal">🐣 Beginner</FormLabel>
-                      </FormItem>
-                      <FormItem className="flex items-center space-x-3 space-y-0">
-                        <FormControl>
-                          <RadioGroupItem value="Intermediate" />
-                        </FormControl>
-                        <FormLabel className="font-normal">🎓 Intermediate</FormLabel>
-                      </FormItem>
-                      <FormItem className="flex items-center space-x-3 space-y-0">
-                        <FormControl>
-                          <RadioGroupItem value="Expert" />
-                        </FormControl>
-                        <FormLabel className="font-normal">🚀 Expert</FormLabel>
-                      </FormItem>
+                      {["Beginner", "Intermediate", "Expert"].map((level) => (
+                        <FormItem key={level} className="flex items-center">
+                            <FormControl>
+                                <RadioGroupItem value={level} id={level} className="sr-only" />
+                            </FormControl>
+                            <FormLabel 
+                                htmlFor={level}
+                                className={`w-full text-center p-3 rounded-lg border-2 cursor-pointer transition-colors ${field.value === level ? 'bg-primary text-primary-foreground border-primary' : 'bg-card hover:bg-muted border-border'}`}
+                            >
+                                {level === "Beginner" && "🐣"}
+                                {level === "Intermediate" && "🎓"}
+                                {level === "Expert" && "🚀"}
+                                <span className="block mt-1 text-sm font-medium">{level}</span>
+                            </FormLabel>
+                        </FormItem>
+                      ))}
                     </RadioGroup>
                   </FormControl>
                   <FormMessage />
@@ -153,17 +150,16 @@ export default function PdfUploadForm({
             />
             <Button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || !form.formState.isValid}
               className="w-full"
               size="lg"
-              suppressHydrationWarning
             >
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Upload & Summarize
+              Summarize This
             </Button>
           </form>
         </Form>
-      </CardContent>
-    </Card>
+        </div>
+    </div>
   );
 }

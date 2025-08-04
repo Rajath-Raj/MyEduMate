@@ -8,8 +8,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { BrainCircuit, BookUp, FileText } from "lucide-react";
+import { BrainCircuit, BookUp, FileText, ArrowLeft, Mic } from "lucide-react";
 import { ScrollArea } from "../ui/scroll-area";
 
 type SummaryViewProps = {
@@ -17,6 +23,7 @@ type SummaryViewProps = {
   summary: string;
   onStartChat: () => void;
   onSummarizeAgain: () => void;
+  onChangeLevel: () => void;
 };
 
 export default function SummaryView({
@@ -24,33 +31,57 @@ export default function SummaryView({
   summary,
   onStartChat,
   onSummarizeAgain,
+  onChangeLevel,
 }: SummaryViewProps) {
+  // Simple split for accordion. In a real app, this would be more robust.
+  const sections = summary.split('\n\n');
+  const tldr = sections.shift() || "";
+  
   return (
-    <Card className="w-full shadow-lg animate-in fade-in-50 duration-500">
-      <CardHeader>
-        <div className="flex items-center gap-3">
-            <FileText className="h-6 w-6 text-primary" />
-            <CardTitle className="truncate font-headline">{title}</CardTitle>
+    <div className="w-full">
+        <div className="flex items-center gap-4 mb-4">
+            <Button variant="ghost" size="icon" onClick={onSummarizeAgain}>
+                <ArrowLeft />
+            </Button>
+            <div>
+                <h1 className="text-2xl font-bold">Summary</h1>
+                <p className="text-muted-foreground">{title}</p>
+            </div>
         </div>
-        <CardDescription>Here is the summary of your document.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <ScrollArea className="h-[400px] w-full rounded-md border p-4 bg-muted/50">
-          <p className="text-sm whitespace-pre-wrap leading-relaxed">
-            {summary}
-          </p>
-        </ScrollArea>
-      </CardContent>
-      <CardFooter className="flex flex-col sm:flex-row justify-between gap-2">
-        <Button variant="outline" onClick={onSummarizeAgain}>
-          <BookUp className="mr-2 h-4 w-4" />
-          Summarize another document
-        </Button>
-        <Button onClick={onStartChat}>
-          <BrainCircuit className="mr-2 h-4 w-4" />
-          Ask a Question
-        </Button>
-      </CardFooter>
-    </Card>
+        <Card className="w-full shadow-lg animate-in fade-in-50 duration-500">
+        <CardContent className="pt-6">
+            <div className="mb-4">
+                <h3 className="font-bold text-lg mb-2">TL;DR</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{tldr}</p>
+            </div>
+            <Accordion type="single" collapsible className="w-full">
+              {sections.map((section, index) => {
+                const parts = section.split(':');
+                const title = parts.length > 1 ? parts[0] : `Section ${index + 1}`;
+                const content = parts.length > 1 ? parts.slice(1).join(':') : section;
+                return (
+                  <AccordionItem value={`item-${index}`} key={index}>
+                    <AccordionTrigger>{title}</AccordionTrigger>
+                    <AccordionContent>{content.trim()}</AccordionContent>
+                  </AccordionItem>
+                );
+              })}
+            </Accordion>
+        </CardContent>
+        </Card>
+        <div className="flex flex-col gap-2 mt-4">
+            <Button variant="outline" onClick={onChangeLevel}>
+              Change Level
+            </Button>
+            <Button onClick={onStartChat}>
+              <BrainCircuit className="mr-2" />
+              Ask a Question
+            </Button>
+             <Button>
+              <Mic className="mr-2" />
+              Listen
+            </Button>
+        </div>
+    </div>
   );
 }

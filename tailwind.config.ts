@@ -10,9 +10,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        body: ['"PT Sans"', 'sans-serif'],
-        headline: ['"PT Sans"', 'sans-serif'],
-        code: ['monospace'],
+        sans: ["var(--font-sans)", "sans-serif"],
       },
       colors: {
         background: 'hsl(var(--background))',
@@ -67,9 +65,9 @@ export default {
         },
       },
       borderRadius: {
-        lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)',
+        lg: 'calc(var(--radius) - 4px)', /* 12px */
+        md: 'calc(var(--radius) - 8px)',
+        sm: 'calc(var(--radius) - 10px)',
       },
       keyframes: {
         'accordion-down': {
