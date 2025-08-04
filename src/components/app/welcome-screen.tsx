@@ -22,6 +22,8 @@ const WelcomeScreen = ({ onGuestLogin }: WelcomeScreenProps) => {
         </CardHeader>
         <CardContent className="space-y-3 p-6">
           <Button size="lg" className="w-full rounded-xl" onClick={onGuestLogin}>Continue as Guest</Button>
+          <Button size="lg" variant="outline" className="w-full rounded-xl">Sign in with Email</Button>
+          <Button size="lg" variant="outline" className="w-full rounded-xl">Sign in with Google</Button>
         </CardContent>
         <CardFooter className="p-6">
           <p className="text-xs text-muted-foreground text-center w-full">
