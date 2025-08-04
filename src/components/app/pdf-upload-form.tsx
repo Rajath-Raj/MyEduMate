@@ -14,7 +14,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, UploadCloud, ArrowLeft } from "lucide-react";
 import { useState } from "react";
 import { Input } from "../ui/input";
@@ -27,11 +26,11 @@ export const PdfUploadFormSchema = z.object({
     .any()
     .refine((file): file is File => file instanceof File, "Please upload a file.")
     .refine(
-      (file) => file.size <= MAX_FILE_SIZE,
+      (file) => file && file.size <= MAX_FILE_SIZE,
       `Max file size is 20MB.`
     )
     .refine(
-      (file) => ACCEPTED_FILE_TYPES.includes(file.type),
+      (file) => file && ACCEPTED_FILE_TYPES.includes(file.type),
       "Only .pdf files are accepted."
     ),
   summaryLevel: z.enum(["Beginner", "Intermediate", "Expert"]),
@@ -153,6 +152,7 @@ export default function PdfUploadForm({
               disabled={isLoading || !form.formState.isValid}
               className="w-full"
               size="lg"
+              suppressHydrationWarning
             >
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Summarize This
