@@ -5,3 +5,8 @@ runConfig:
   # Increase this value if you'd like to automatically spin up
   # more instances in response to increased traffic.
   maxInstances: 1
+# Required for Genkit to be able to discover your flows.
+# Set this to the path to the directory containing your flows.
+# The path is relative to your repository's root.
+# genkit:
+#   flowPath: src/ai/flows
