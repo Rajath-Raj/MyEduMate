@@ -13,7 +13,7 @@ import PdfUploadForm, {
 import SummaryView from "@/components/app/summary-view";
 import ChatView, { type Message } from "@/components/app/chat-view";
 import { Button } from "@/components/ui/button";
-import { Loader2, Home as HomeIcon, History, User, Plus, Upload } from "lucide-react";
+import { Loader2, Home as HomeIcon, History, User, Upload } from "lucide-react";
 import WelcomeScreen from "@/components/app/welcome-screen";
 
 type SummaryLevel = z.infer<typeof PdfUploadFormSchema>["summaryLevel"];
@@ -23,6 +23,7 @@ export default function HomePage() {
   const [appState, setAppState] = useState<AppState>("welcome");
   const [summary, setSummary] = useState<string>("");
   const [pdfTitle, setPdfTitle] = useState("");
+  const [userName, setUserName] = useState("");
   const { toast } = useToast();
 
   const [messages, setMessages] = useState<Message[]>([]);
@@ -38,7 +39,8 @@ export default function HomePage() {
     });
   };
 
-  const handleGuestLogin = () => {
+  const handleGuestLogin = (name: string) => {
+    setUserName(name);
     setAppState("dashboard");
   }
 
@@ -119,7 +121,7 @@ export default function HomePage() {
       case "dashboard":
         return (
           <div className="text-center p-4 flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
-            <h1 className="text-2xl font-bold mb-4">Hi, Alex! Ready to learn today?</h1>
+            <h1 className="text-2xl font-bold mb-4">Hi, {userName}! Ready to learn today?</h1>
             <Button size="lg" className="h-14 rounded-full shadow-lg" onClick={() => setAppState('upload')}>
               <Upload className="mr-2" />
               Upload a PDF to Get Started
