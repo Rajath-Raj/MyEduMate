@@ -56,7 +56,9 @@ The workflow is simple and user-centric:
 
 | Dashboard                                   | Chat Interface                              |
 | ------------------------------------------- | ------------------------------------------- |
-| ![Dashboard Screenshot](path/to/dashboard.png) | ![Chat Screenshot](path/to/chat.png)        |
+| ![Dashboard Screenshot]<img width="1568" height="870" alt="Screenshot 2025-09-01 170908" src="https://github.com/user-attachments/assets/9644b3bd-c7e6-43be-b2dc-0544162dba13" />
+ | ![Chat Screenshot]<img width="1005" height="379" alt="Screenshot 2025-09-01 171213" src="https://github.com/user-attachments/assets/fb287be7-c30b-4eec-a28c-0960bf28280c" />
+        |
 
 ---
 
